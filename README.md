@@ -10,7 +10,7 @@ MonLite is an enterprise-grade infrastructure monitoring platform I designed and
 
 ## Demo
 
-[**Quick 2-minute overview**](https://www.youtube.com/watch?v=-Uv5KcElnrE) · [**Full 7-minute walkthrough**](https://www.youtube.com/watch?v=cL_WTg8VCFg)
+[**Quick 2-minute overview**](https://www.youtube.com/watch?v=8yCcPyOEzzk) · [**Full 7-minute walkthrough**](https://www.youtube.com/watch?v=Qudo0nftRvQ)
 
 ## Screenshots
 
