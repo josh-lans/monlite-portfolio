@@ -216,8 +216,14 @@ The value wasn't "AI wrote my code." The value was:
 
 ## Additional Documentation
 
-- [`methodology/AI_DEVELOPMENT_METHODOLOGY.md`](methodology/AI_DEVELOPMENT_METHODOLOGY.md) — Full breakdown of the structured AI development workflow
+### Architecture
+- [`architecture/PLATFORM_ARCHITECTURE.md`](architecture/PLATFORM_ARCHITECTURE.md) — Full platform architecture: backend, frontend, collectors, alarm engine, scalability patterns
 - [`architecture/SAP_MONITORING_OVERVIEW.md`](architecture/SAP_MONITORING_OVERVIEW.md) — SAP connector design, surveillance rules engine, auto-detection patterns
+- [`architecture/DATABASE_MONITORING.md`](architecture/DATABASE_MONITORING.md) — 7-engine database monitoring: driver interface, HANA NAT cascade, MaxDB JVM bridge
+- [`architecture/SECURITY_AND_COMPLIANCE.md`](architecture/SECURITY_AND_COMPLIANCE.md) — 8-phase security hardening, multi-AI audit, RBAC, SSO, encryption, compliance readiness
+
+### Methodology
+- [`methodology/AI_DEVELOPMENT_METHODOLOGY.md`](methodology/AI_DEVELOPMENT_METHODOLOGY.md) — Structured AI development workflow, `.claude-docs` system, multi-AI verification
 
 ---
 
