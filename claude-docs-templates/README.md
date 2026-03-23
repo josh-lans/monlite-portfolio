@@ -6,6 +6,14 @@ These templates implement the methodology described in [AI_DEVELOPMENT_METHODOLO
 
 ## Quick Start
 
+### Option 1: Automatic Setup (Recommended)
+Give your AI assistant the [AI_BOOTSTRAP.md](AI_BOOTSTRAP.md) file and say:
+
+> **"Set up .claude-docs for my project."**
+
+The AI will explore your codebase and generate project-specific docs automatically. Works with Claude Code, Cursor, Copilot, ChatGPT, or any AI coding assistant.
+
+### Option 2: Manual Setup
 ```bash
 mkdir -p .claude-docs
 cp templates/MEMORY.md .claude-docs/
