@@ -4,55 +4,175 @@
 
 ## What is MonLite?
 
-MonLite is an enterprise-grade infrastructure monitoring platform I designed and built to replace a seven-figure commercial SaaS monitoring contract. It provides real-time observability across SAP systems, databases, Linux/Windows hosts, and web services with AI-powered diagnostics.
+MonLite is an enterprise-grade infrastructure monitoring platform I designed and built to replace a seven-figure commercial SaaS monitoring contract. It provides real-time observability across SAP systems, databases, Linux/Windows hosts, and web services — all from a single pane of glass with AI-powered diagnostics.
 
 **Built in under 4 months** using AI-assisted development (Claude Code + structured session methodology).
 
+## Demo
+
+[**Watch the 7-minute product walkthrough**](screen_recording/Screen%20Recording%202026-03-23%20at%2010.01.49%20AM.mov)
+
+## Screenshots
+
+| Dashboard | Connections & Hierarchy |
+|-----------|------------------------|
+| ![Dashboard](screenshots/dashboard.png) | ![Connections](screenshots/connections.png) |
+
+| Alarm Management | Threshold Configuration |
+|-----------------|------------------------|
+| ![Alarms](screenshots/alarms.png) | ![Thresholds](screenshots/thresholds.png) |
+
+| Visualizations | Runbooks |
+|---------------|----------|
+| ![Visualizations](screenshots/visualizations.png) | ![Runbooks](screenshots/runbooks.png) |
+
+---
+
 ## Platform Capabilities
 
-| Domain | Coverage |
-|--------|----------|
-| **SAP ABAP RFC** | 19 surveillance categories — work processes, jobs, short dumps, locks, transports, IDocs, RFC queues, spool, certificates, change settings audit trail, parameter compliance, and more via direct RFC calls |
-| **SAP SAPControl** | Process health, work processes, dispatcher queues, enqueue locks, ICM threads via SOAP API |
-| **Databases** | MSSQL, Oracle, SAP HANA, IBM DB2, Sybase ASE, SAP MaxDB, PostgreSQL — connectivity, performance, storage, backup monitoring |
-| **Hosts** | Linux (SSH) and Windows (WinRM) — CPU, memory, disk, swap, load, filesystem projections |
-| **Web Services** | HTTP/HTTPS availability, response time, SSL certificate expiry |
-| **AI Diagnostics** | Luna — air-gapped LLM assistant with RAG pipeline (Ollama/Qwen local + Gemini cloud fallback) |
+### Server Monitoring
+- **Linux** (SSH) and **Windows** (WinRM/SNMP) host monitoring
+- CPU, memory, disk, swap, load average, network, process-level metrics
+- Filesystem capacity projections with days-to-full prediction
+- Auto-discovery of filesystems and drives
+- ICMP/TCP availability with configurable ping intervals
+
+### Database Monitoring
+Seven production-ready database connectors with real-time metrics, backup tracking, auto-discovery, and per-engine threshold profiles:
+
+| Engine | Metrics |
+|--------|---------|
+| **Microsoft SQL Server** | CPU, memory, I/O, PLE, deadlocks, connections, batch requests, log space, backup age/status |
+| **Oracle** | Tablespaces, SGA/PGA, sessions, wait events, redo log, datafile I/O |
+| **SAP HANA** | Sessions, blocking, deadlocks, backup age, memory/CPU/storage, cache hit ratio, replication lag (3-strategy connection cascade for Docker/NAT) |
+| **IBM DB2** | Bufferpool hit ratio, lock waits, log utilization, connections, tablespace usage |
+| **SAP/Sybase ASE** | CPU, memory, I/O, deadlocks, connections, tempdb usage |
+| **SAP MaxDB** | Cache hit ratio, sessions, lock waits, data/log area, backup status |
+| **PostgreSQL** | Connections, cache hit ratio, transaction rates, table bloat, replication lag |
+
+### SAP Application Monitoring
+Two connector types with a Unified mode that auto-selects the best check source:
+
+**SAPControl (SOAP API):**
+- Process health (disp+work, icman, gwrd, enserver)
+- Work process utilization by type (DIA, BGD, UPD, SPO, ENQ)
+- Dispatcher queue depth, enqueue locks/errors, ICM threads
+- Parameter compliance (security baseline monitoring)
+- Auto-discovery via SSH/WinRM from managed hosts
+
+**ABAP RFC (19 Surveillance Categories):**
+
+| Category | SAP Source | Key Details |
+|----------|-----------|-------------|
+| Work Processes | TH_WPINFO | Per-type thresholds, runtime tracking, PRIV detection |
+| Jobs | TBTCO | Duration/delay/error detection, top offenders |
+| Short Dumps | /SDF/GET_DUMP_LOG | Error ID classification, aggregate + individual alerting |
+| Locks | ENQUEUE_READ | Lock age tracking, orphan detection, table-level filtering |
+| Transports | TPALOG | Return code filtering (RC>=8), time-windowed import history |
+| IDocs | EDIDC | Error/waiting status, direction-aware (inbound/outbound) |
+| RFC Queues | TRFC_QIN/QOUT_OVERVIEW | Point-in-time queue snapshots, error detection |
+| Spool | TSP01 | Error status monitoring, time-windowed |
+| Certificates | SSF_ALERT_CERTEXPIRE | PSE certificate expiry via INST_EXECUTE_REPORT |
+| Change Settings | TMW + T000 | SE06/SCC4 drift detection with full audit history trail |
+| Parameter Compliance | PAHI | Security baseline monitoring (login/*, rdisp/*, icf/*) |
+| SAPconnect | SOOS | Email/fax delivery status (SCOT/SOST equivalent) |
+| Batch Input | APQI | Session status monitoring |
+| Application Logs | BALHDR | SLG1 equivalent with severity filtering |
+| Audit Logs | RSAU_READ_LOG | SM20 equivalent, security event detection |
+| Process Chains (RDA) | RSPCLOGCHAIN | BW/BI chain execution with auto-detection |
+| RFC Destinations | RFCDES + RFC_PING | Destination availability testing |
+| Update Requests | VHDR | SM13 equivalent, error detection |
+| Dispatcher Queues | TH_DPINFO | Queue depth monitoring |
+
+### Web Service Monitoring
+- HTTP/HTTPS endpoint availability and response time
+- 6 authentication types (Basic, Bearer, OAuth2, API Key, custom headers, none)
+- SSL certificate expiry tracking
+- Routed through collectors for full network reach behind firewalls
+
+### AI Diagnostics — Luna
+- Air-gapped LLM assistant using Ollama/Qwen locally (no data leaves the firewall)
+- Cloud LLM fallback (Gemini, OpenAI, Anthropic) for enhanced analysis
+- RAG pipeline indexing 27 help documentation pages
+- Direct database context queries (real-time SAP status, job history, change audit)
+- Natural-language infrastructure queries: *"Is NPL open for changes?"* *"What failed jobs ran on PRD today?"*
+- Anti-hallucination validation against live metrics
+
+---
 
 ## Architecture
 
 ```
-                    ┌─────────────────────────────┐
-                    │     MonLite Control Plane    │
-                    │  FastAPI + React 19 + Vite   │
-                    │  PostgreSQL + Elasticsearch  │
-                    └──────────────┬───────────────┘
-                                   │ HTTPS/WSS
-                    ┌──────────────┴───────────────┐
-              ┌─────┴─────┐                 ┌──────┴──────┐
-              │ Collector  │                 │  Collector  │
-              │  (Edge 1)  │                 │  (Edge 2)   │
-              │ Python 3.12│                 │ Python 3.12 │
-              └─────┬──────┘                 └──────┬──────┘
-                    │                                │
-        ┌───────────┼───────────┐         ┌──────────┼──────────┐
-        │           │           │         │          │          │
-    SAP RFC    Database     SSH/WinRM   SAP SOAP   HTTPS    ICMP/TCP
-    (PyRFC)    (pymssql)    (paramiko)  (requests) (certs)  (ping)
+┌─ CONTROL PLANE ────────────────────────────────────────────┐
+│                                                            │
+│  ┌──────────────┐  HTTPS   ┌─────────────────────────────┐ │
+│  │  Browser UI   │ ──────► │  monlite-app                 │ │
+│  │  React 19 +   │         │  FastAPI + 22 route modules  │ │
+│  │  Vite + TW4   │         │  Alarm engine + Scheduler    │ │
+│  │  Luna Chat    │         │  Luna AI (RAG + DB context)  │ │
+│  └──────────────┘          └──────┬──────────┬────────────┘ │
+│                                   │          │              │
+│                        ┌──────────▼──┐  ┌───▼────────────┐ │
+│                        │ PostgreSQL   │  │ Ollama         │ │
+│                        │ 16           │  │ (optional)     │ │
+│                        └─────────────┘  └────────────────┘ │
+└────────────────────────────────────────────────────────────┘
+
+  ┌──────────────┐    HTTPS/9443    ┌──────────────────────┐
+  │  Collector    │ ─────────────► │  /api/collector/*      │
+  │  Agents       │  push metrics,  │  heartbeat, metrics,  │
+  │  (Docker or   │  WS checks,     │  system info, pair,   │
+  │   systemd)    │  DB checks,     │  ws-checks, db-checks │
+  │               │  SAP RFC/SOAP   │  results              │
+  └──────────────┘                  └──────────────────────┘
 ```
 
 ## Technical Stack
 
-- **Backend**: Python 3.12, FastAPI, SQLAlchemy, Uvicorn, PostgreSQL
-- **Frontend**: React 19, Vite, Tailwind CSS, ApexCharts, glassmorphism UI
-- **Collectors**: Distributed Python agents with auto-update, hot-reload config
-- **AI**: Ollama (local Qwen 2.5), Google Gemini API, RAG with help doc indexing
-- **Auth**: Microsoft Entra ID / Okta SSO, RBAC, CSRF, encrypted credential vault
-- **Integrations**: ServiceNow CMDB + Event Management, Elasticsearch, Webhooks
+| Layer | Technology |
+|-------|-----------|
+| **Backend** | Python 3.12, FastAPI, SQLAlchemy 2.0, Pydantic v2, Uvicorn |
+| **Frontend** | React 19, Vite 7, Tailwind CSS 4, ApexCharts, D3.js |
+| **Database** | PostgreSQL 16 (TIMESTAMPTZ, enforced SSL in production) |
+| **AI** | Ollama/Qwen (local), Gemini, OpenAI, Anthropic (configurable) |
+| **Auth** | Microsoft Entra ID / Okta SSO (OIDC + PKCE), LDAP, Argon2, RBAC |
+| **Security** | Fernet encryption, HMAC audit logs, CSP headers, CSRF, DOMPurify XSS |
+| **Integrations** | ServiceNow (CMDB + Event Mgmt), Elasticsearch/Kibana, Webhooks |
+| **Deployment** | Docker Compose or bare-metal (systemd), CLI tools (monlitectl) |
+
+---
+
+## Enterprise Security & Compliance
+
+MonLite has undergone an **8-phase security hardening** and **independent multi-AI verification audits** using Claude, OpenAI Codex, Gemini, and GitHub Copilot — providing cross-model validation of security posture:
+
+- **OWASP Top 10 coverage**: CSP headers, DOMPurify XSS sanitization, CORS hardening, SSRF fail-closed, SQL injection prevention via SQLAlchemy ORM
+- **Session security**: HttpOnly cookies (no localStorage tokens), CSRF double-submit, configurable inactivity timeout, concurrent session limits, session write throttling
+- **Data protection**: Fernet encryption (AES-128-CBC + HMAC) for credentials at rest, HMAC-signed audit logs, enforced PostgreSQL SSL in production
+- **Access control**: RBAC (System Admin / Engineer Admin / Engineer / Viewer), company-level multi-tenant isolation, team-based role elevation, ITAR-compatible
+- **Authentication**: Local accounts + LDAP + OIDC SSO (Okta, Entra ID) with JIT provisioning, group-to-role mapping, Force SSO mode, IdP-managed MFA
+- **Rate limiting**: Fail-closed in production on login, password reset, SSO, and API key generation endpoints
+- **Audit trail**: Every action logged with HMAC integrity verification, expandable detail, Luna session review
+
+---
+
+## Scalability
+
+Designed for **3,000+ monitored endpoints** with **200+ concurrent users**:
+
+- ETag/304 response caching across all API endpoints
+- SQL subquery RBAC filters (no post-fetch filtering)
+- Paginated responses with configurable limits
+- 90-day metric retention with hourly rollups (nightly cleanup)
+- Distributed collector agents with parallel ThreadPoolExecutor (10 DB + 15 WS workers)
+- Remote Push Update from the UI (no SSH into collectors)
+- Time-windowed SAP RFC queries to prevent WP exhaustion on production systems
+
+---
 
 ## AI-Assisted Development Methodology
 
-One of the most interesting aspects of this project is the development methodology. I used Claude Code (Anthropic's CLI agent) as my primary development partner across 160+ structured sessions.
+One of the most distinctive aspects of this project is the development methodology. I used multiple AI coding assistants — primarily **Claude Code** (Anthropic) across 160+ structured sessions, with **OpenAI Codex**, **Gemini**, and **GitHub Copilot** for independent security and architecture verification.
 
 ### The `.claude-docs` System
 
@@ -64,7 +184,14 @@ I developed a structured documentation system that maintains project context acr
 - **SESSION_LOG.md** — Detailed session history for context continuity
 - **LESSONS.md** — Learned patterns to prevent repeated mistakes
 
-This system enabled consistent, high-quality output across months of development without the AI "forgetting" architectural decisions or taking shortcuts.
+See [`methodology/AI_DEVELOPMENT_METHODOLOGY.md`](methodology/AI_DEVELOPMENT_METHODOLOGY.md) for the full breakdown.
+
+### Multi-AI Verification
+
+Critical features underwent independent review across multiple AI platforms:
+- **Security audits**: Codex P0 audit covering OWASP, SOC2, GDPR, ISO27001 compliance
+- **Architecture review**: Cross-model validation of alarm engine, surveillance rules, and collection scheduling
+- **Scalability analysis**: Load testing patterns and connection pool tuning verified across Claude, Gemini, and Copilot
 
 ### Key Insight
 
@@ -72,48 +199,27 @@ The value wasn't "AI wrote my code." The value was:
 1. **Domain expertise** (12 years of SAP Basis) provided the *what* and *why*
 2. **AI accelerated** the *how* — translating operational knowledge into production code
 3. **Structured methodology** maintained quality at speed
+4. **Cross-model verification** caught blind spots no single AI would find
 
-## SAP ABAP RFC Monitoring — Deep Dive
-
-The ABAP RFC connector is the most complex module, providing 19 surveillance categories:
-
-| Category | SAP Source | Key Details |
-|----------|-----------|-------------|
-| Work Processes | TH_WPINFO | Per-WP-type thresholds (DIA/BGD/UPD/SPO), runtime tracking, PRIV detection |
-| Jobs | TBTCO | Time-windowed scans, duration/delay/error detection, top offenders |
-| Short Dumps | /SDF/GET_DUMP_LOG | Error ID classification, aggregate + individual alerting |
-| Locks | ENQUEUE_READ | Lock age tracking, orphan detection, table-level filtering |
-| Transports | TPALOG | Return code filtering (RC>=8 errors), time-windowed import history |
-| IDocs | EDIDC | Error/waiting status, direction-aware (inbound/outbound) |
-| RFC Queues | TRFC_QIN/QOUT_OVERVIEW | Point-in-time queue snapshots, error detection |
-| Spool | TSP01 | Error status monitoring, time-windowed |
-| Certificates | SSF_ALERT_CERTEXPIRE | PSE certificate expiry via INST_EXECUTE_REPORT |
-| Change Settings | TMW + T000 | SE06/SCC4 drift detection with full audit history trail |
-| Parameter Compliance | PAHI | Security baseline monitoring (login/*, rdisp/*, icf/*) |
-| And 8 more... | Various | SAPconnect, batch input, app logs, audit logs, RFC destinations, etc. |
-
-### Surveillance Rules Engine
-
-Unlike simple threshold-based monitoring, MonLite uses a rules engine (`SapSurveillanceRule`) that supports:
-- Per-entity evaluation (each WP, each job, each lock gets its own alarm)
-- Regex filtering on names, users, programs
-- Aggregate vs individual counting modes
-- Percentage-based thresholds
-- Runtime duration thresholds
-- Exclusion rules (suppress known-safe entities)
-- Auto-clear with configurable trigger/clear poll counts
-
-## Screenshots
-
-*See `/screenshots/` directory for UI examples.*
+---
 
 ## Design Philosophy
 
-- **Progressive disclosure** — Simple by default, power features on expand
-- **SAP terminology preserved** — disp+work, icman, gwrd — no prettifying for Basis admins
-- **Glassmorphism UI** — Premium feel with semi-transparent cards, backdrop blur, dark/light modes
+- **Progressive disclosure** — Simple by default, power features revealed on expand
+- **Domain terminology preserved** — SAP Basis admins see SM50/SM37/ST22 concepts, DBAs see familiar metrics
+- **Glassmorphism UI** — Premium feel with semi-transparent cards, backdrop blur, starfield animation, dark/light modes
 - **Air-gapped first** — Luna AI works fully offline; cloud is optional enhancement
-- **Scale-aware** — Every RFC call is time-windowed and row-limited to prevent WP exhaustion on production SAP systems
+- **Scale-aware** — Every query is bounded: time-windowed, row-limited, row-count capped
+- **Collector-side efficiency** — Keep RFC calls short, release work processes quickly, cache negative results
+
+---
+
+## Additional Documentation
+
+- [`methodology/AI_DEVELOPMENT_METHODOLOGY.md`](methodology/AI_DEVELOPMENT_METHODOLOGY.md) — Full breakdown of the structured AI development workflow
+- [`architecture/SAP_MONITORING_OVERVIEW.md`](architecture/SAP_MONITORING_OVERVIEW.md) — SAP connector design, surveillance rules engine, auto-detection patterns
+
+---
 
 ## Contact
 
