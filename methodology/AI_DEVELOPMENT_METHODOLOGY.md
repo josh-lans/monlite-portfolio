@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the structured methodology I developed for building enterprise software with AI coding assistants. This approach enabled a single developer to build a production-grade monitoring platform (19 SAP surveillance categories, 7 database engines, distributed collectors, AI diagnostics) in under 4 months.
+This document describes the structured methodology I developed for building enterprise software with AI coding assistants. This approach enabled a single developer to build a production-grade monitoring platform (19 SAP surveillance categories, 7 database engines, distributed collectors, AI diagnostics) in 6 weeks.
 
 ## The Problem
 

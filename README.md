@@ -6,7 +6,7 @@
 
 MonLite is an enterprise-grade infrastructure monitoring platform I designed and built to replace a seven-figure commercial SaaS monitoring contract. It provides real-time observability across SAP systems, databases, Linux/Windows hosts, and web services — all from a single pane of glass with AI-powered diagnostics.
 
-**Built in under 4 months** using AI-assisted development (Claude Code + structured session methodology).
+**Built in 6 weeks** using AI-assisted development (Claude Code + structured session methodology).
 
 ## Demo
 

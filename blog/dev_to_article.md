@@ -1,12 +1,12 @@
 ---
-title: How I Built Enterprise Monitoring Software in 4 Months Using Structured AI Development
+title: How I Built Enterprise Monitoring Software in 6 Weeks Using Structured AI Development
 published: true
 tags: ai, programming, productivity, saas
 ---
 
 ## The Problem
 
-I'm a SAP Basis administrator with 12 years of experience managing enterprise infrastructure. I know exactly what monitoring tools should do — I've used (and been frustrated by) every commercial option: SolarWinds, Avantra, Solution Manager, RedPeaks. They're either too expensive, too rigid, or don't understand SAP deeply enough.
+I'm a SAP Basis administrator with 12 years of experience managing enterprise infrastructure. I know exactly what monitoring tools should do — I've used (and been frustrated by) every commercial option out there. They're either too expensive, too rigid, or don't understand SAP deeply enough.
 
 So I decided to build my own. The catch: I'm not a traditional software developer. I understand systems architecture and can read code, but I've never built a full-stack web application from scratch.
 
@@ -76,7 +76,7 @@ That knowledge comes from 12 years of staring at SM50, ST22, and STRUST. The AI 
 
 ### 2. Structure > raw capability
 
-Without the `.claude-docs` system, I'd estimate the project would have taken 12+ months with constant rework. With it, complex features land correctly on the first try because the AI has full context of every architectural decision, every gotcha, and every standard.
+Without the `.claude-docs` system, I'd estimate the project would have taken 12+ months with constant rework. With it, we went from zero to production in 6 weeks. With it, complex features land correctly on the first try because the AI has full context of every architectural decision, every gotcha, and every standard.
 
 ### 3. AI verification should be cross-model
 
