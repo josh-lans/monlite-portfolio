@@ -99,4 +99,6 @@ The full portfolio (architecture docs, methodology, screenshots, demo video) is 
 
 ---
 
+**Want to try this methodology?** I've published [drop-in `.claude-docs` templates](https://github.com/josh-lans/monlite-portfolio/tree/main/claude-docs-templates) you can download and adapt for your own projects. They work with Claude Code, Cursor, Copilot, or any AI assistant.
+
 *If you're building something complex with AI assistance and want to discuss the methodology, reach out — joshlans@me.com or [LinkedIn](https://linkedin.com/in/joshlans).*

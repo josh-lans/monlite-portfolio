@@ -225,6 +225,9 @@ The value wasn't "AI wrote my code." The value was:
 ### Methodology
 - [`methodology/AI_DEVELOPMENT_METHODOLOGY.md`](methodology/AI_DEVELOPMENT_METHODOLOGY.md) — Structured AI development workflow, `.claude-docs` system, multi-AI verification
 
+### Templates
+- [`claude-docs-templates/`](claude-docs-templates/) — **Drop-in templates** for the `.claude-docs` system. Download and adapt for your own AI-assisted projects. Includes MEMORY.md, STANDARDS.md, DEPENDENCIES.md, SESSION_LOG.md, LESSONS.md, SESSION_PROTOCOL.md, and CLAUDE.md.
+
 ---
 
 ## Contact
