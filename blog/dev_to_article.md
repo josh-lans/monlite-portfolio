@@ -99,6 +99,35 @@ The full portfolio (architecture docs, methodology, screenshots, demo video) is 
 
 ---
 
-**Want to try this methodology?** I've published [drop-in `.claude-docs` templates](https://github.com/josh-lans/monlite-portfolio/tree/main/claude-docs-templates) you can download and adapt for your own projects. They work with Claude Code, Cursor, Copilot, or any AI assistant.
+## Try It Yourself — 10-Minute Setup
+
+I've open-sourced the entire methodology as drop-in templates:
+
+**[`.claude-docs` Templates & AI Bootstrap](https://github.com/josh-lans/monlite-portfolio/tree/main/claude-docs-templates)**
+
+There are two ways to get started:
+
+### Auto-Setup (Recommended)
+Open [AI_BOOTSTRAP.md](https://github.com/josh-lans/monlite-portfolio/blob/main/claude-docs-templates/AI_BOOTSTRAP.md), paste it into your AI coding assistant, and say:
+
+> "Set up .claude-docs for my project."
+
+The AI will analyze your codebase and generate project-specific MEMORY.md, STANDARDS.md, DEPENDENCIES.md, and more — customized to your tech stack, conventions, and architecture. Works with Claude Code, Cursor, GitHub Copilot, ChatGPT, or any AI assistant.
+
+### Manual Setup
+Copy the 7 template files, fill in the placeholders, and add a `CLAUDE.md` to your project root. The templates include instructional comments explaining what goes where.
+
+### What You Get
+| File | Purpose |
+|------|---------|
+| MEMORY.md | Project context the AI reads first every session |
+| STANDARDS.md | Numbered rules (§) the AI must follow |
+| DEPENDENCIES.md | "If you change X, also change Y" checklists |
+| SESSION_LOG.md | What changed, when, and why |
+| LESSONS.md | Mistakes documented so they never repeat |
+
+The system pays for itself the first time it prevents a "I changed the API but forgot to update the frontend" bug. After 160+ sessions, I can't imagine building without it.
+
+---
 
 *If you're building something complex with AI assistance and want to discuss the methodology, reach out — joshlans@me.com or [LinkedIn](https://linkedin.com/in/joshlans).*
