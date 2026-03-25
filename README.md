@@ -105,7 +105,10 @@ Two connector types with a Unified mode that auto-selects the best check source:
 - **Install scripts** — single-server (`install.sh`), HA database (`db-install.sh`), HA control plane (`cp-install.sh`), load balancer (`lb-install.sh`)
 - **Docker support** — single-server Compose, HA profiles, Docker Swarm multi-host
 - **Release package builder** — `tools/build-release.sh` generates customer-ready `.tar.gz` for air-gapped deployments
+
+### Enterprise Controls
 - **Check enable/disable hierarchy** — Global → Profile → Company → Platform → System → Host → Connector
+- **CLI management** — `monlitectl` for Docker management, HA cluster control (`ha status`, `ha failover`), offline updates, and release packaging
 
 ---
 
