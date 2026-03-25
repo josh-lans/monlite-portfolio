@@ -4,9 +4,9 @@
 
 ## What is MonLite?
 
-MonLite is an enterprise-grade infrastructure monitoring platform I designed and built from scratch. It provides real-time observability across SAP systems, databases, Linux/Windows hosts, and web services — all from a single pane of glass with AI-powered diagnostics.
+MonLite is an enterprise-grade infrastructure monitoring platform I designed and built from scratch. It provides real-time observability across SAP systems, databases, Linux/Windows hosts, and web services — all from a single pane of glass with AI-powered diagnostics. Now with **High Availability** (automatic failover in 5-30 seconds) and **one-command deployment** for both single-server and distributed HA setups.
 
-**Built in 6 weeks** using AI-assisted development (Claude Code + structured session methodology).
+**Built in 6 weeks** using AI-assisted development (Claude Code + structured session methodology). Currently at **v3.1.0** with 170+ development sessions.
 
 ## Demo
 
@@ -98,26 +98,50 @@ Two connector types with a Unified mode that auto-selects the best check source:
 - Natural-language infrastructure queries: *"Is NPL open for changes?"* *"What failed jobs ran on PRD today?"*
 - Anti-hallucination validation against live metrics
 
+### High Availability & Deployment
+- **PostgreSQL advisory lock leader election** — automatic failover in 5-30 seconds
+- **Worker gating architecture** — 13 background workers run on all nodes, check `is_leader()` each cycle
+- **Zero-downtime cascade updates** — one-click rolling upgrade across CP nodes
+- **Install scripts** — single-server (`install.sh`), HA database (`db-install.sh`), HA control plane (`cp-install.sh`), load balancer (`lb-install.sh`)
+- **Docker support** — single-server Compose, HA profiles, Docker Swarm multi-host
+- **Release package builder** — `tools/build-release.sh` generates customer-ready `.tar.gz` for air-gapped deployments
+- **Check enable/disable hierarchy** — Global → Profile → Company → Platform → System → Host → Connector
+
 ---
 
 ## Architecture
 
+### Single Server
 ```
 ┌─ CONTROL PLANE ────────────────────────────────────────────┐
-│                                                            │
-│  ┌──────────────┐  HTTPS   ┌─────────────────────────────┐ │
-│  │  Browser UI   │ ──────► │  monlite-app                 │ │
-│  │  React 19 +   │         │  FastAPI + 22 route modules  │ │
-│  │  Vite + TW4   │         │  Alarm engine + Scheduler    │ │
-│  │  Luna Chat    │         │  Luna AI (RAG + DB context)  │ │
-│  └──────────────┘          └──────┬──────────┬────────────┘ │
-│                                   │          │              │
-│                        ┌──────────▼──┐  ┌───▼────────────┐ │
-│                        │ PostgreSQL   │  │ Ollama         │ │
-│                        │ 16           │  │ (optional)     │ │
-│                        └─────────────┘  └────────────────┘ │
+│  Browser UI ──HTTPS──► FastAPI + React 19 + Luna AI        │
+│                        Alarm engine + Scheduler             │
+│                        PostgreSQL 16 + Ollama (optional)    │
 └────────────────────────────────────────────────────────────┘
+```
 
+### HA Deployment
+```
+                    ┌─────────────────────┐
+                    │   PostgreSQL (DB)    │
+                    └──────────┬──────────┘
+                ┌──────────────┴──────────────┐
+        ┌───────▼───────┐           ┌────────▼────────┐
+        │  CP1 (LEADER)  │◄─ lock ──►│  CP2 (STANDBY)  │
+        │  13 workers    │  failover │  13 workers     │
+        │  ACTIVE        │   5-30s   │  GATED (idle)   │
+        └───────┬────────┘           └────────┬────────┘
+                └──────────────┬───────────────┘
+                        ┌──────▼──────┐
+                        │  nginx LB   │
+                        └──────┬──────┘
+                    ┌──────────▼──────────┐
+                    │  Collector Agents    │
+                    └─────────────────────┘
+```
+
+### Collector Communication
+```
   ┌──────────────┐    HTTPS/9443    ┌──────────────────────┐
   │  Collector    │ ─────────────► │  /api/collector/*      │
   │  Agents       │  push metrics,  │  heartbeat, metrics,  │

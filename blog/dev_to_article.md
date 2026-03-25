@@ -130,4 +130,4 @@ The system pays for itself the first time it prevents a "I changed the API but f
 
 ---
 
-*If you're building something complex with AI assistance and want to discuss the methodology, reach out — joshlans@me.com or [LinkedIn](https://linkedin.com/in/joshlans).*
+*If you're building something complex with AI assistance and want to discuss the methodology, reach out — joshlans@me.com or [LinkedIn](https://linkedin.com/in/joshualans).*
